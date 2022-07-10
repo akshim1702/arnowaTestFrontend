@@ -20,6 +20,7 @@ const SignUp = () => {
   let currTime;
   const getTime = () => {
     var today = new Date()
+
     return currTime = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
   }
 
@@ -27,7 +28,7 @@ const SignUp = () => {
     e.preventDefault();
     const { name, email, phone } = user;
 
-    if (name != 'admin') {
+    if (name != 'admin' || email != 'admin@admin.com' || phone != '0000000000') {
       const result = await fetch('/login', {
         method: 'POST',
         headers: {
@@ -37,7 +38,7 @@ const SignUp = () => {
           name: name,
           email: email,
           phone: phone,
-          timeOfLogin: getTime(),
+          timeOfLogin: new Date().toLocaleString(),
           userType: "normal"
         })
       })
@@ -47,8 +48,8 @@ const SignUp = () => {
       }
       else {
         console.log("registaration successful")
+        sessionStorage.setItem('userType', 'normal');
         history.push('/')
-        sessionStorage.setItem('time', getTime())
       }
     }
     else if (name == 'admin' && email == "admin@admin.com" && phone == '0000000000') {
@@ -61,19 +62,28 @@ const SignUp = () => {
           name: name,
           email: email,
           phone: phone,
-          timeOfLogin: getTime(),
+          timeOfLogin: Date(),
           userType: "admin"
         })
       })
       const res = await result.json()
+
       if (res.status === 422 || !res) {
         window.alert("invalid")
-      }
-      else {
         alert("input value again");
-        console.log("registaration successful")
+      }
+      else if (res, message == 'data  fields already exist') {
+        sessionStorage.setItem('userType', 'admin');
         history.push('/')
       }
+      else {
+        console.log("registaration successful")
+        sessionStorage.setItem('userType', 'admin');
+        history.push('/')
+      }
+    }
+    else if (name == 'admin' && email != "admin@admin.com" || phone != '0000000000') {
+      alert("invalid Input")
     }
   }
 
